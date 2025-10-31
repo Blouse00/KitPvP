@@ -4,7 +4,6 @@ import com.planetgallium.kitpvp.util.Toolkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.planetgallium.kitpvp.Game;
@@ -23,12 +22,12 @@ public class LeaveListener implements Listener {
 	@EventHandler
 	public void onLeave(PlayerQuitEvent e) {
 		Player p = e.getPlayer();
-		if (Toolkit.inArena(p)) {
+		if (Toolkit.inArena(p, arena)) {
 			arena.deletePlayer(p);
 		}
 	}
 
-	@EventHandler
+/*	@EventHandler
 	public void onWorldChange(PlayerChangedWorldEvent e) {
 		if (Toolkit.inArena(e.getFrom())) { // if they left from a kitpvp arena
 			Player p = e.getPlayer();
@@ -41,6 +40,6 @@ public class LeaveListener implements Listener {
 			arena.removePlayer(p);
 			// no need to clear stats from cache; that will be done on player quit above
 		}
-	}
+	}*/
 	
 }

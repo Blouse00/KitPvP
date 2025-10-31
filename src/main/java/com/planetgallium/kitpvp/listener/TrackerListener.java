@@ -27,7 +27,7 @@ public class TrackerListener implements Listener {
 	
 	@EventHandler
 	public void onCompassHeld(PlayerItemHeldEvent e) {
-		if (!Toolkit.inArena(e.getPlayer())) {
+		if (!Toolkit.inArena(e.getPlayer(), arena)) {
 			return;
 		}
 

@@ -1,6 +1,5 @@
 package com.planetgallium.kitpvp.command;
 
-import com.cryptomorin.xseries.XSound;
 import com.planetgallium.kitpvp.Game;
 import com.planetgallium.kitpvp.api.Kit;
 import com.planetgallium.kitpvp.game.Arena;
@@ -257,7 +256,7 @@ public class MainCommand implements CommandExecutor {
 
         Player target = Bukkit.getPlayer(playerName);
 
-        if (target != null && Toolkit.inArena(target)) {
+        if (target != null && Toolkit.inArena(target, arena)) {
             clearKit(target);
 
             target.sendMessage(messages.fetchString("Messages.Commands.Cleared"));
@@ -284,7 +283,7 @@ public class MainCommand implements CommandExecutor {
     private void executeStatsCommandOther(CommandSender sender, String[] args) {
         String targetName = args[1];
 
-        if (plugin.getDatabase().isPlayerRegistered(targetName)) {
+        if (plugin.getDb().isPlayerRegistered(targetName)) {
             sendStatsMessage(sender, targetName);
         } else {
             sender.sendMessage(messages.fetchString("Messages.Error.Offline"));
@@ -297,7 +296,7 @@ public class MainCommand implements CommandExecutor {
 
         Player target = Bukkit.getPlayer(playerName);
 
-        if (target != null && Toolkit.inArena(target)) {
+        if (target != null && Toolkit.inArena(target, arena)) {
             Kit kitToGive = arena.getKits().getKitByName(kitName);
             sender.sendMessage(messages.fetchString("Messages.Commands.KitOther")
                     .replace("%player%", playerName)
@@ -321,7 +320,7 @@ public class MainCommand implements CommandExecutor {
                         .replace("%number%", possibleAmount));
             }
 
-            String playerUUID = plugin.getDatabase().usernameToUUID(playerName);
+            String playerUUID = plugin.getDb().usernameToUUID(playerName);
 
             if (playerUUID == null) {
                 sender.sendMessage(resources.getMessages().fetchString("Messages.Error.Offline"));
@@ -484,7 +483,7 @@ public class MainCommand implements CommandExecutor {
     }
 
     private void executeKitCommandSelf(Player p, String[] args) {
-        if (Toolkit.inArena(p)) {
+        if (Toolkit.inArena(p, arena)) {
             String kitName = args[1];
             Kit kitToGive = arena.getKits().getKitByName(kitName);
 

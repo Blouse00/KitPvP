@@ -145,6 +145,8 @@ public class Table {
             return matchingRecords; // should use getRecord instead
         }
 
+    //    System.out.println("searching the table " + this.getName() + " for " +
+             //   fieldToSearchFor.getName() + " = " + fieldToSearchFor.getValue().toString());
         String searchQuery = Table.SEARCH_RECORD_QUERY
                 .replace("{table_name}", this.getName())
                 .replace("{column_to_search_name}", fieldToSearchFor.getName());
@@ -174,6 +176,8 @@ public class Table {
         String getRecordQuery = Table.GET_RECORD_QUERY
                 .replace("{table_name}", this.getName())
                 .replace("{primary_field_name}", keyToRecord.getName());
+
+      //  System.out.println(getRecordQuery);
         try (Connection connection = dataSource.getConnection() ;
              PreparedStatement statement = connection.prepareStatement(getRecordQuery)) {
             setStatementParameterToType(statement, 1, keyToRecord);

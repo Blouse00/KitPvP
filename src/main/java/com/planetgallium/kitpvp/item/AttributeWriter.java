@@ -98,12 +98,12 @@ public class AttributeWriter {
                 resource.save();
 
             } else if (Toolkit.versionToNumber() >= 19) {
-                PotionData data = meta.getBasePotionData();
+                /*PotionData data = meta.getBasePotionData();
 
                 String effectName = data.getType().getEffectType().getName();
                 resource.set(effectPath + "." + effectName + ".Upgraded", data.isUpgraded());
                 resource.set(effectPath + "." + effectName + ".Extended", data.isExtended());
-                resource.save();
+                resource.save();*/
             }
         }
     }
@@ -120,10 +120,8 @@ public class AttributeWriter {
     private static void serializeEnchantments(Resource resource, ItemStack item, String path) {
         if (item.getEnchantments().size() > 0) {
             for (Enchantment enchantment : item.getEnchantments().keySet()) {
-                String enchantmentName = Toolkit.versionToNumber() < 113 ?
-                        enchantment.getName() : enchantment.getKey().getKey();
-                resource.set(path + ".Enchantments." + enchantmentName.toUpperCase(),
-                        item.getEnchantments().get(enchantment));
+                String enchantmentName =  enchantment.getName();
+                resource.set(path + ".Enchantments." + enchantmentName.toUpperCase(), item.getEnchantments().get(enchantment));
                 resource.save();
             }
         }

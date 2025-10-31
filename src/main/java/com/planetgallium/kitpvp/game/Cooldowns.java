@@ -16,7 +16,7 @@ public class Cooldowns {
 	
 	public Cooldowns(Game plugin, Arena arena) {
 		this.stats = arena.getStats();
-		this.database = plugin.getDatabase();
+		this.database = plugin.getDb();
 	}
 
 	public void setAbilityCooldown(String playerName, String abilityName) {

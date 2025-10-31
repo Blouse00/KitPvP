@@ -16,8 +16,10 @@ public class AttackListener implements Listener {
 
 	private final Resources resources;
 	private final Kits kits;
+	private final Game plugin;
 
 	public AttackListener(Game plugin) {
+		this.plugin = plugin;
 		this.resources = plugin.getResources();
 		this.kits = plugin.getArena().getKits();
 	}
@@ -28,7 +30,7 @@ public class AttackListener implements Listener {
 			Player damagedPlayer = (Player) e.getEntity();
 			Player damager = (Player) e.getDamager();
 			
-			if (Toolkit.inArena(damagedPlayer) && !damagedPlayer.hasMetadata("NPC")) {
+			if (Toolkit.inArena(damagedPlayer, plugin.getArena()) && !damagedPlayer.hasMetadata("NPC")) {
 				if (resources.getConfig().getBoolean("Arena.NoKitProtection")) {
 					if (!kits.playerHasKit(damagedPlayer.getName())) {
 						damager.sendMessage(resources.getMessages().fetchString("Messages.Error.Invincible"));
@@ -49,7 +51,7 @@ public class AttackListener implements Listener {
 		if (e.getEntity() instanceof Player) {
 			Player damagedPlayer = (Player) e.getEntity();
 
-			if (Toolkit.inArena(damagedPlayer)) {
+			if (Toolkit.inArena(damagedPlayer, plugin.getArena())) {
 				if (resources.getConfig().getBoolean("Arena.NoKitProtection")) {
 					if (!kits.playerHasKit(damagedPlayer.getName())) {
 						if (e.getCause() != DamageCause.VOID) {

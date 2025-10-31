@@ -12,15 +12,10 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.event.weather.WeatherChangeEvent;
 import com.planetgallium.kitpvp.game.Arena;
-import com.planetgallium.kitpvp.util.Resources;
 import com.planetgallium.kitpvp.util.Toolkit;
 
 public class ArenaListener implements Listener {
@@ -37,7 +32,7 @@ public class ArenaListener implements Listener {
 	public void onBreak(BlockBreakEvent e) {
 		Player p = e.getPlayer();
 		
-		if (Toolkit.inArena(p) && config.getBoolean("Arena.PreventBlockBreaking")) {
+		if (Toolkit.inArena(p, arena) && config.getBoolean("Arena.PreventBlockBreaking")) {
 			e.setCancelled(!p.hasPermission("kp.arena.blockbreaking"));
 		}
 	}
@@ -46,7 +41,7 @@ public class ArenaListener implements Listener {
 	public void onPlace(BlockPlaceEvent e) {
 		Player p = e.getPlayer();
 		
-		if (Toolkit.inArena(p) && config.getBoolean("Arena.PreventBlockPlacing")) {
+		if (Toolkit.inArena(p, arena) && config.getBoolean("Arena.PreventBlockPlacing")) {
 			e.setCancelled(!p.hasPermission("kp.arena.blockplacing"));
 		}
 		
@@ -54,7 +49,7 @@ public class ArenaListener implements Listener {
 	
 	@EventHandler
 	public void onItemDamage(PlayerItemDamageEvent e) {
-		if (Toolkit.inArena(e.getPlayer()) && config.getBoolean("Arena.PreventItemDurabilityDamage")) {
+		if (Toolkit.inArena(e.getPlayer(), arena) && config.getBoolean("Arena.PreventItemDurabilityDamage")) {
 			e.setCancelled(true);
 		}
 	}
@@ -63,7 +58,7 @@ public class ArenaListener implements Listener {
 	public void onDrop(PlayerDropItemEvent e) {
 		Player p = e.getPlayer();
 		
-		if (Toolkit.inArena(p) && config.getBoolean("Arena.PreventItemDropping")) {
+		if (Toolkit.inArena(p, arena) && config.getBoolean("Arena.PreventItemDropping")) {
 			e.setCancelled(!p.hasPermission("kp.arena.itemdropping"));
 		}
 	}
@@ -72,50 +67,49 @@ public class ArenaListener implements Listener {
 	public void onHunger(FoodLevelChangeEvent e) {
 		Player p = (Player) e.getEntity();
 		
-		if (Toolkit.inArena(p) && config.getBoolean("Arena.PreventHunger")) {
+		if (Toolkit.inArena(p, arena) && config.getBoolean("Arena.PreventHunger")) {
 			e.setCancelled(true);
 		}
 	}
 	
     @EventHandler
     public void onExplode(EntityExplodeEvent e) {
-    	if (Toolkit.inArena(e.getEntity()) && config.getBoolean("Arena.PreventBlockBreaking")) {
+    	//if (Toolkit.inArena(e.getEntity()) && config.getBoolean("Arena.PreventBlockBreaking")) {
     		if (e.getEntityType() == EntityType.PRIMED_TNT) { // enable TNT explosion animation
     			e.blockList().clear();
     			e.setCancelled(false);
     			return;
 			}
 			e.setCancelled(true);
-		}
+		//}
     }
 	
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent e) {
-		if (Toolkit.inArena(e.getEntity())) {
 
-			if (e.getEntity() instanceof Player && e.getDamager() instanceof Projectile) {
+		if (e.getEntity() instanceof Damageable) {
 
-				Player damagedPlayer = (Player) e.getEntity();
+			if (e.getDamager().getType() == EntityType.PRIMED_TNT) {
+				if (e.getEntity() instanceof ArmorStand || !(e.getEntity() instanceof LivingEntity)) {
+					// for preventing breakage of paintings, item frames, etc.
+					e.setCancelled(true);
+				}
+			}
+
+		} else if (e.getEntity() instanceof Player && e.getDamager() instanceof Projectile) {
+
+			Player damagedPlayer = (Player) e.getEntity();
+			if (Toolkit.inArena(damagedPlayer, arena)) {
 				if (config.getBoolean("Arena.NoKitProtection")) {
 					if (!arena.getKits().playerHasKit(damagedPlayer.getName())) {
 						e.setCancelled(true);
 					}
 				}
-
-			} else if (e.getEntity() instanceof Damageable) {
-
-				if (e.getDamager().getType() == EntityType.PRIMED_TNT) {
-					if (e.getEntity() instanceof ArmorStand || !(e.getEntity() instanceof LivingEntity)) {
-						// for preventing breakage of paintings, item frames, etc.
-						e.setCancelled(true);
-					}
-				}
-
 			}
 		}
 	}
     
-	@EventHandler
+/*	@EventHandler
 	public void onWeatherChange(WeatherChangeEvent e) {
 		if (Toolkit.inArena(e.getWorld()) && config.getBoolean("Arena.KeepWeatherAtSunny")) {
 			if (e.toWeatherState()) {
@@ -125,14 +119,14 @@ public class ArenaListener implements Listener {
 				e.getWorld().setWeatherDuration(0);
 			}
 		}
-	}
+	}*/
 	
 	@EventHandler
 	public void onExplosion(EntityDamageEvent e) {
 		if (e.getEntity() instanceof Player) {
 			Player damagedPlayer = (Player) e.getEntity();
 			
-			if (Toolkit.inArena(damagedPlayer)) {
+			if (Toolkit.inArena(damagedPlayer, arena)) {
 
 				if (e.getCause() == DamageCause.BLOCK_EXPLOSION ||
 						e.getCause() == DamageCause.ENTITY_EXPLOSION ||
@@ -162,7 +156,7 @@ public class ArenaListener implements Listener {
 	public void onInteract(PlayerInteractEvent e) {
 		Player p = e.getPlayer();
 		
-		if (Toolkit.inArena(p)) {
+		if (Toolkit.inArena(p, arena)) {
 			if (e.getClickedBlock() != null) {
 				if (e.getClickedBlock().getType() == XMaterial.CHEST.parseMaterial()) {
 					if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
@@ -175,13 +169,13 @@ public class ArenaListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	/*@EventHandler
 	public void onHangingEntityBreakByTNT(HangingBreakEvent e) {
 		if (Toolkit.inArena(e.getEntity())) {
 			if (e.getCause() == HangingBreakEvent.RemoveCause.EXPLOSION) {
 				e.setCancelled(true);
 			}
 		}
-	}
+	}*/
 	
 }

@@ -6,7 +6,7 @@
 
     <groupId>com.planetgallium</groupId>
     <artifactId>KitPvP</artifactId>
-    <version>2.2.2</version>
+    <version>2.2.3</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
@@ -107,16 +107,22 @@
     </profiles>
 
     <dependencies>
-        <dependency>
+<!--        <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.20.4-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>-->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.8.8-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
-            <version>2.11.0</version>
+            <version>2.11.6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

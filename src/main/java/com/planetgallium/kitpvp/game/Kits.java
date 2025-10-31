@@ -47,7 +47,7 @@ public class Kits {
         kitToCreate.toResource(kitResource);
 
         resources.addResource(kitToCreate.getName() + ".yml", kitResource);
-        plugin.getDatabase().addKitCooldownTable(kitName);
+        plugin.getDb().addKitCooldownTable(kitName);
 
         automaticallyAddKitToMenu(fromPlayer, kitToCreate);
     }
@@ -127,10 +127,10 @@ public class Kits {
         }
         
         if (Toolkit.versionToNumber() >= 19) {
-            ItemStack offhandItem = p.getInventory().getItemInOffHand();
+            /*ItemStack offhandItem = p.getInventory().getItemInOffHand();
             if (offhandItem != null) {
                 kit.setOffhand(offhandItem);
-            }
+            }*/
         }
 
         //          ABILITY         //
@@ -289,7 +289,7 @@ public class Kits {
 
     public void deleteKit(String kitName) {
         resources.removeResource(kitName + ".yml");
-        plugin.getDatabase().deleteKitCooldownTable(kitName);
+        plugin.getDb().deleteKitCooldownTable(kitName);
         CacheManager.getKitCache().remove(kitName);
     }
 

@@ -63,19 +63,25 @@ public class Infobase {
     }
 
     public boolean isPlayerRegistered(String username) {
+      //  System.out.println("Checking if player " + username + " is registered in the database.");
         String uuid = usernameToUUID(username);
+      //  System.out.println("Resolved UUID: " + uuid);
         return tableContainsUUID("stats", uuid);
     }
 
     public void registerPlayerStats(Player p) {
         if (!verifyTableExists("stats")) {
+            System.out.println("Stats table does not exist in the database. Cannot register player stats.");
             return;
         }
 
         Field uuidField = uuidField("uuid", p.getUniqueId().toString());
         Record playerRecord = statsTable.getRecord(uuidField);
 
+
         if (playerRecord == null) {
+
+            System.out.println("Registering new player stats for " + p.getName() + " in the database.");
             Record statsRecord = new Record(
                     uuidField,
                     new Field("username", DataType.STRING, p.getName(), Infobase.USERNAME_MAX_CHARACTERS),
@@ -86,6 +92,7 @@ public class Infobase {
                             resources.getLevels().getInt("Levels.Options.Minimum-Level")));
             statsTable.insertRecord(statsRecord);
         } else {
+            System.out.println("Player stats for " + p.getName() + " already exist in the database.");
             // check if stored username needs changing if a player changed their username
             String storedUsername = (String) playerRecord.getFieldValue("username");
             String currentUsername = p.getName();
@@ -134,16 +141,21 @@ public class Infobase {
 
     public String usernameToUUID(String username) {
         if (CacheManager.getUUIDCache().containsKey(username)) {
+          //  System.out.println("you got cached uuid for " + username);
             return CacheManager.getUUIDCache().get(username);
         }
 
         if (verifyTableExists("stats")) {
             Table stats = database.getTable("stats");
-
+         //   System.out.println("looking up uuid for " + username);
             List<Record> matchingRecords = stats.searchRecords(usernameField(username));
             if (matchingRecords.size() == 1) {
-                Record matchingRecord = matchingRecords.get(0);
+               Record matchingRecord = matchingRecords.get(0);
+              /* for (Field field : matchingRecord.getFields()) {
+                   System.out.println("field: " + field.getName() + " value: " + field.getValue());
 
+               }*/
+              //  System.out.println("found uuid for " + username);
                 String uuid = (String) matchingRecord.getFieldValue("uuid");
                 CacheManager.getUUIDCache().put(username, uuid);
                 return uuid;

@@ -168,7 +168,7 @@ public class AttributeParser {
     }
 
     private static void setUnbreakable(ItemStack item) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        if (Toolkit.versionToNumber() <= 114) {
+     //   if (Toolkit.versionToNumber() <= 114) {
             ItemMeta meta = item.getItemMeta();
 
             Method spigotMethod = meta.getClass().getMethod("spigot");
@@ -181,9 +181,9 @@ public class AttributeParser {
             setUnbreakableMethod.setAccessible(true);
 
             setUnbreakableMethod.invoke(spigotInstance, true);
-        } else if (Toolkit.versionToNumber() > 114) {
+     /*   } else if (Toolkit.versionToNumber() > 114) {
             item.getItemMeta().setUnbreakable(true);
-        }
+        }*/
     }
 
     private static ItemStack setEffectsFromPath(ItemStack item, Resource resource, String path) {
@@ -215,7 +215,7 @@ public class AttributeParser {
         boolean isUpgraded = resource.getBoolean(firstChildPath + ".Upgraded");
         boolean isExtended = resource.getBoolean(firstChildPath + ".Extended");
 
-        if (Toolkit.versionToNumber() == 18) {
+     //   if (Toolkit.versionToNumber() == 18) {
             boolean isSplash = resource.fetchString(path.replace("Effects", "") + ".Type").equals("SPLASH_POTION");
             Potion potion = Potion.fromItemStack(item);
             potion.setSplash(isSplash);
@@ -224,13 +224,13 @@ public class AttributeParser {
             if (isExtended) potion.setHasExtendedDuration(true);
 
             return potion.toItemStack(item.getAmount());
-        } else if (Toolkit.versionToNumber() >= 19) {
+     /*   } else if (Toolkit.versionToNumber() >= 19) {
             potionMeta.setBasePotionData(new PotionData(potionType, isExtended, isUpgraded));
-        }
+        }*/
 
-        item.setItemMeta(potionMeta);
+      //  item.setItemMeta(potionMeta);
 
-        return item;
+      //  return item;
     }
 
     private static void setCustomEffectsFromPath(ItemStack item, Resource resource, String path) {

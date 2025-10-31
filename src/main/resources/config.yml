@@ -65,10 +65,16 @@ Death:
     Enabled: true
 Respawn:
   Commands: []
+#PlayerTracker:
+#  Name: '&aPlayer Tracker'
+#  Message: '&b&lTarget: &3%nearestplayer% &b&lDistance: &3%distance%'
+#  NoneOnline: '&cNo Players Online'
+#  TrackBelowY: 128
+#  RefreshOnlyWhenHeld: true
 PlayerTracker:
-  Name: '&aPlayer Tracker'
-  Message: '&b&lTarget: &3%nearestplayer% &b&lDistance: &3%distance%'
-  NoneOnline: '&cNo Players Online'
+  Name: '&aReturn to Hub &7(Right Click)'
+  Message: '&aReturn to Hub &7(Right Click)'
+  NoneOnline: '&aReturn to Hub &7(Right Click)'
   TrackBelowY: 128
   RefreshOnlyWhenHeld: true
 Soups:

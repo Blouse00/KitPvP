@@ -21,18 +21,20 @@ public class Stats {
 
     public Stats(Game plugin, Arena arena) {
         this.plugin = plugin;
-        this.database = plugin.getDatabase();
+        this.database = plugin.getDb();
         this.resources = plugin.getResources();
         this.levels = plugin.getResources().getLevels();
         this.leaderboards = arena.getLeaderboards();
     }
 
     public void createPlayer(Player p) {
+        System.out.println("Stats: Creating player " + p.getName());
         CacheManager.getUUIDCache().put(p.getName(), p.getUniqueId().toString());
         database.registerPlayerStats(p);
     }
 
     private boolean isPlayerRegistered(String username) {
+        //System.out.println(username);
         if (CacheManager.getStatsCache().containsKey(username)) { // try to use cache first to be faster
             return true;
         }
@@ -128,6 +130,8 @@ public class Stats {
     }
 
     public int getStat(String identifier, String username) {
+
+       // System.out.println("Getting stat " + identifier + " for " + username);
         if (!isPlayerRegistered(username)) {
             return -1;
         }

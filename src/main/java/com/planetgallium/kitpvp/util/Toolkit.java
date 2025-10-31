@@ -7,6 +7,7 @@ import java.util.Optional;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.XSound;
+import com.planetgallium.kitpvp.game.Arena;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -40,8 +41,12 @@ public class Toolkit {
 		return false;
 	}
 	
-	public static boolean inArena(Entity entity) {
+	/*public static boolean inArena(Entity entity) {
 		return inArena(entity.getWorld());
+	}*/
+
+	public static boolean inArena(Player player, Arena arena) {
+		return arena.isPlayerInArena(player);
 	}
 	
  	public static String[] getNearestPlayer(Player player, int maxY) {
@@ -79,9 +84,17 @@ public class Toolkit {
  	}
 
  	public static void runCommands(Player p, List<String> commands, String replaceFrom, String replaceTo) {
-		if (commands == null) return;
+
+	/*	System.out.println("Commands to run: " + commands);
+
+		if (commands == null) {
+			System.out.println("Commands list is null, returning.");
+			return;
+		}*/
+
 
 		for (String commandString : commands) {
+			//System.out.println("Commands to run: " + commandString);
 			String[] commandPhrase = commandString.split(":", 2);
 
 			if (commandPhrase.length == 1) {
@@ -287,6 +300,7 @@ public class Toolkit {
 		ItemMeta meta = item.getItemMeta();
 
 		if (item.hasItemMeta() && meta != null) {
+			System.out.println("Item display name: " + meta.getDisplayName() + " | Target display name: " + targetDisplayName);
 			return meta.hasDisplayName() && Toolkit.translate(meta.getDisplayName()).equals(targetDisplayName);
 		}
 		return false;
@@ -319,9 +333,9 @@ public class Toolkit {
 
 	public static void setMaxHealth(Player p, int amount) {
 		if (Toolkit.versionToNumber() >= 19) {
-			AttributeInstance healthAttribute = p.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+		/*	AttributeInstance healthAttribute = p.getAttribute(Attribute.GENERIC_MAX_HEALTH);
 			assert healthAttribute != null;
-			healthAttribute.setBaseValue(amount);
+			healthAttribute.setBaseValue(amount);*/
 			return;
 		}
 		p.setMaxHealth(amount);
@@ -329,9 +343,9 @@ public class Toolkit {
 
 	public static int getMaxHealth(Player p) {
 		if (Toolkit.versionToNumber() >= 19) {
-			AttributeInstance healthAttribute = p.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+			/*AttributeInstance healthAttribute = p.getAttribute(Attribute.GENERIC_MAX_HEALTH);
 			assert healthAttribute != null;
-			return (int) healthAttribute.getValue();
+			return (int) healthAttribute.getValue();*/
 		}
 		return (int) p.getMaxHealth();
 	}
@@ -397,8 +411,8 @@ public class Toolkit {
 				return p.getItemInHand();
 			}
 
-			return p.getInventory().getItem(interactEvent.getHand() != null ?
-					interactEvent.getHand() : EquipmentSlot.HAND);
+			/*return p.getInventory().getItem(interactEvent.getHand() != null ?
+					interactEvent.getHand() : EquipmentSlot.HAND);*/
 		} else if (e instanceof PlayerInteractEntityEvent) {
 			PlayerInteractEntityEvent interactEntityEvent = (PlayerInteractEntityEvent) e;
 			p = interactEntityEvent.getPlayer();
@@ -406,7 +420,7 @@ public class Toolkit {
 				return p.getItemInHand();
 			}
 
-			return p.getInventory().getItem(interactEntityEvent.getHand());
+		//	return p.getInventory().getItem(interactEntityEvent.getHand());
 			// ^ no null check needed, there is always a hand with this event
 		}
 		return Toolkit.safeItemStack("AIR");
@@ -423,8 +437,8 @@ public class Toolkit {
 				return;
 			}
 
-			p.getInventory().setItem(interactEvent.getHand() != null ?
-					interactEvent.getHand() : EquipmentSlot.HAND, item);
+		/*	p.getInventory().setItem(interactEvent.getHand() != null ?
+					interactEvent.getHand() : EquipmentSlot.HAND, item);*/
 		} else if (e instanceof PlayerInteractEntityEvent) {
 			PlayerInteractEntityEvent interactEntityEvent = (PlayerInteractEntityEvent) e;
 			p = interactEntityEvent.getPlayer();
@@ -433,18 +447,18 @@ public class Toolkit {
 				return;
 			}
 
-			p.getInventory().setItem(interactEntityEvent.getHand(), item);
+			//p.getInventory().setItem(interactEntityEvent.getHand(), item);
 			// ^ no null check needed, there is always a hand with this event
 		}
 	}
 
 	public static boolean eitherHandHasMaterial(Player p, String materialString) {
 		Material materialToFind = XMaterial.matchXMaterial(materialString).get().parseMaterial();
-		if (versionToNumber() == 18) {
+	//	if (versionToNumber() == 18) {
 			return p.getItemInHand().getType() == materialToFind;
-		}
-		return p.getInventory().getItemInMainHand().getType() == materialToFind ||
-				p.getInventory().getItemInOffHand().getType() == materialToFind;
+	//	}
+	/*	return p.getInventory().getItemInMainHand().getType() == materialToFind ||
+				p.getInventory().getItemInOffHand().getType() == materialToFind;*/
 	}
 
 	public static void playSoundToPlayer(Player p, String soundName, int pitch) {
@@ -452,11 +466,11 @@ public class Toolkit {
 	}
 
 	public static SlotWrapper getSlotUsedForInteraction(PlayerInteractEvent e) {
-		if (versionToNumber() >= 19) {
+		/*if (versionToNumber() >= 19) {
 			if (e.getHand() == EquipmentSlot.OFF_HAND) {
 				return new SlotWrapper(e.getHand());
 			}
-		}
+		}*/
 		return new SlotWrapper(e.getPlayer().getInventory().getHeldItemSlot());
 	}
 
@@ -501,7 +515,7 @@ public class Toolkit {
 
 		public void placeItemInSlot(Player p, ItemStack item) {
 			if (usesEquipmentSlot) {
-				p.getInventory().setItem(equipmentSlot, item);
+			//	p.getInventory().setItem(equipmentSlot, item);
 			} else {
 				p.getInventory().setItem(heldItemSlot, item);
 			}

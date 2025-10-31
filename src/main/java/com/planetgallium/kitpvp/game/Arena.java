@@ -32,6 +32,7 @@ public class Arena {
 	private final KillStreaks killstreaks;
 	private final Cooldowns cooldowns;
 	private final Menus menus;
+	private final Set<UUID> lstPlayersJoined = new HashSet<>();
 
 	public Arena(Game plugin, Resources resources) {
 		this.plugin = plugin;
@@ -47,12 +48,36 @@ public class Arena {
 		this.stats = new Stats(plugin, this);
 		this.kits = new Kits(plugin, this);
 		this.abilities = new Abilities(plugin);
-		this.killstreaks = new KillStreaks(resources);
+		this.killstreaks = new KillStreaks(resources, this);
 		this.cooldowns = new Cooldowns(plugin, this);
 		this.menus = new Menus(resources);
 	}
+
+	public  boolean isPlayerInArena(Player p) {
+		return lstPlayersJoined.contains(p.getUniqueId());
+	}
+
+	public void addPlayerToKitPvP(Player p) {
+		CacheManager.getUUIDCache().put(p.getName(), p.getUniqueId().toString());
+		addPlayer(p, true, true);
+	}
+
+	public void addPlayer(Player p) {
+		CacheManager.getUUIDCache().put(p.getName(), p.getUniqueId().toString());
+		addPlayer(p, true, true);
+	}
+
+	public void removePlayerFromKitPvP(Player p) {
+		Toolkit.runCommands(p, config.getStringList("Leave.Commands"),
+				"none", "none");
+		deletePlayer(p);
+	}
+
+
 	
 	public void addPlayer(Player p, boolean toSpawn, boolean giveItems) {
+		lstPlayersJoined.add(p.getUniqueId());
+		p.getInventory().clear();
 		cooldowns.clearPlayerAbilityCooldowns(p.getName());
 
 		kits.resetPlayerKit(p.getName());
@@ -97,8 +122,10 @@ public class Arena {
 			updateScoreboards(p, false);
 		}
 	}
-	
+
+	// fires when a player dies
 	public void removePlayer(Player p) {
+		lstPlayersJoined.remove(p.getUniqueId());
 		CacheManager.getPlayerAbilityCooldowns(p.getName()).clear();
 		CacheManager.getPotionSwitcherUsers().remove(p.getName());
 
@@ -122,8 +149,10 @@ public class Arena {
 		stats.pushCachedStatsToDatabase(p.getName(), false); // cached stats are pushed to database on death
 		hitCache.remove(p.getName());
 	}
-	
+
+	// fires when a player leaves the arena
 	public void deletePlayer(Player p) {
+		lstPlayersJoined.remove(p.getUniqueId());
 		if (config.getBoolean("Arena.ClearInventoryOnLeave")) {
 			p.getInventory().clear();
 			p.getInventory().setArmorContents(null);
@@ -156,6 +185,7 @@ public class Arena {
 
 	public void toSpawn(Player p, String arenaName) {
 		if (config.contains("Arenas." + arenaName)) {
+		//	System.out.println("arena toSpawn");
 			p.teleport(Toolkit.getLocationFromResource(config,
 					"Arenas." + arenaName + "." + generateRandomArenaSpawn(arenaName)));
 		} else {

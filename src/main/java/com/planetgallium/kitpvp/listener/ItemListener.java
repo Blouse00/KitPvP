@@ -58,7 +58,7 @@ public class ItemListener implements Listener {
 	public void onInteract(PlayerInteractEvent e) {
 		Player p = e.getPlayer();
 
-		if (Toolkit.inArena(p) &&
+		if (Toolkit.inArena(p, arena) &&
 				(e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK)) {
 
 			ItemStack interactedItem = Toolkit.getHandItemForInteraction(e);
@@ -107,17 +107,24 @@ public class ItemListener implements Listener {
 							"none", "none");
 
 					if (config.getBoolean("Items.Kits.Menu")) {
+						//System.out.println("Opening Kit Menu for " + p.getName());
 						arena.getMenus().getKitMenu().open(p);
+
 					}
 
 					e.setCancelled(true);
 				}
 
 			} else if (interactedItem.hasItemMeta()) {
+
+
+
 				ConfigurationSection items = config.getConfigurationSection("Items");
 
 				for (String identifier : items.getKeys(false)) {
 					String itemPath = "Items." + identifier;
+
+					//System.out.println("Checking item: " + itemPath);
 
 					if (!config.getBoolean(itemPath + ".Enabled")) {
 						return;
@@ -146,7 +153,7 @@ public class ItemListener implements Listener {
 	public void onInteract(PlayerInteractEntityEvent e) {
 		Player damager = e.getPlayer();
 
-		if (Toolkit.inArena(damager) && e.getRightClicked().getType() == EntityType.PLAYER) {
+		if (Toolkit.inArena(damager, arena) && e.getRightClicked().getType() == EntityType.PLAYER) {
 			ItemStack interactedItem = Toolkit.getHandItemForInteraction(e);
 			Player damagedPlayer = (Player) e.getRightClicked();
 
@@ -256,6 +263,7 @@ public class ItemListener implements Listener {
 					@Override
 					public void run() {
 						p.teleport(nearestPlayerLocation);
+						//System.out.println("teelepotying nearest player");
 					}
 				}.runTaskLater(plugin, 5L);
 
@@ -420,16 +428,18 @@ public class ItemListener implements Listener {
 
 	private void hitBySnowball(Player damagedPlayer, Snowball snowball) {
 		if (snowball.getCustomName() != null && snowball.getCustomName().equals("bullet")) {
-			if (Toolkit.inArena(damagedPlayer) && arena.getKits().playerHasKit(damagedPlayer.getName())) {
+			if (Toolkit.inArena(damagedPlayer, arena) && arena.getKits().playerHasKit(damagedPlayer.getName())) {
 				damagedPlayer.damage(4.5);
 			}
 		}
 	}
 
 	private void hitByEgg(Player damagedPlayer, Egg egg) {
-		if (Toolkit.hasMatchingDisplayName(egg.getItem(), abilities.fetchString("Abilities.Trickster.Item.Name"))) {
-			if (Toolkit.inArena(damagedPlayer) && arena.getKits().playerHasKit(damagedPlayer.getName())) {
-
+	//	System.out.println("******************* hit by egg");
+		// the following threw an error, dont think its really needed a slong as I dont use eggs for anything else in kitpvp
+		//if (Toolkit.hasMatchingDisplayName(egg.getItem(), abilities.fetchString("Abilities.Trickster.Item.Name"))) {
+			if (Toolkit.inArena(damagedPlayer, arena) && arena.getKits().playerHasKit(damagedPlayer.getName())) {
+			//	System.out.println("******************* in arena and has kit");
 				if (egg.getShooter() instanceof Player) {
 					Player shooter = (Player) egg.getShooter();
 					Location shooterLocation = shooter.getLocation();
@@ -441,7 +451,7 @@ public class ItemListener implements Listener {
 
 					shooter.teleport(damagedPlayer);
 					damagedPlayer.teleport(shooterLocation);
-
+				//	System.out.println("******************* teleported players");
 					if (abilities.getBoolean("Abilities.Trickster.Message.Enabled")) {
 						shooter.sendMessage(abilities.fetchString("Abilities.Trickster.Message.Message")
 								.replace("%player%", damagedPlayer.getName()));
@@ -456,14 +466,19 @@ public class ItemListener implements Listener {
 								abilities.getInt("Abilities.Trickster.Sound.Pitch"));
 					}
 				}
-			}
+		//	}
 		}
 	}
 
 	@EventHandler
 	public void onBowShot(EntityShootBowEvent e) {
-		if (e.getEntity() instanceof Player && Toolkit.inArena(e.getEntity())) {
+		if (e.getEntity() instanceof Player) {
+
 			Player p = (Player) e.getEntity();
+
+			if (!Toolkit.inArena(p, arena)) {
+				return;
+			}
 
 			if (!p.hasPermission("kp.ability.archer")) {
 				return;
@@ -504,8 +519,8 @@ public class ItemListener implements Listener {
 	private ItemStack createWitchPotion() {
 		PotionType randomPotionType = randomPotionType();
 
-		if (Toolkit.versionToNumber() >= 121) { // 1.21+
-			ItemStack potionStack = new ItemStack(Material.SPLASH_POTION);
+		//if (Toolkit.versionToNumber() >= 121) { // 1.21+
+		/*	ItemStack potionStack = new ItemStack(Material.SPLASH_POTION);
 			Toolkit.appendToLore(potionStack, "X");
 			PotionMeta potionMeta = (PotionMeta) potionStack.getItemMeta();
 
@@ -514,8 +529,8 @@ public class ItemListener implements Listener {
 				potionStack.setItemMeta(potionMeta);
 			}
 
-			return potionStack;
-		} else { // pre 1.21
+			return potionStack;*/
+	//	} else { // pre 1.21
 			Potion potion = new Potion(randomPotionType, 1);
 			potion.setSplash(true);
 
@@ -523,7 +538,7 @@ public class ItemListener implements Listener {
 			Toolkit.appendToLore(potionStack, "X");
 
 			return potionStack;
-		}
+		//}
 	}
 	
 	private PotionType randomPotionType() {

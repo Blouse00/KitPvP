@@ -26,7 +26,7 @@ public class EventListener implements Listener {
 	@EventHandler
 	public void onAbility(PlayerInteractEvent e) {
 		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-			if (Toolkit.inArena(e.getPlayer())) {
+			if (Toolkit.inArena(e.getPlayer(), arena)) {
 				Player p = e.getPlayer();
 				ItemStack currentItem = Toolkit.getHandItemForInteraction(e);
 

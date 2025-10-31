@@ -1,12 +1,10 @@
 package com.planetgallium.kitpvp.listener;
 
-import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.messages.Titles;
 import com.planetgallium.kitpvp.util.*;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -42,7 +40,7 @@ public class DeathListener implements Listener {
 	@EventHandler
 	public void onDeath(PlayerDeathEvent e) {
 		// investigate possible memory leak when FancyDeath is enabled
-		if (Toolkit.inArena(e.getEntity())) {
+		if (Toolkit.inArena(e.getEntity(), arena)) {
 
 			Player victim = e.getEntity();
 			e.setDeathMessage("");
@@ -75,7 +73,7 @@ public class DeathListener implements Listener {
 
 	@EventHandler
 	public void onRespawn(PlayerRespawnEvent e) {
-		if (Toolkit.inArena(e.getPlayer())) {
+		if (Toolkit.inArena(e.getPlayer(), arena)) {
 			if (!config.getBoolean("Arena.FancyDeath")) {
 				Player p = e.getPlayer();
 
@@ -97,6 +95,7 @@ public class DeathListener implements Listener {
 		if (config.getBoolean("Arena.FancyDeath")) {
 			Location deathLocation = victim.getLocation();
 
+			//System.out.println("teleporting n fancy death");
 			new BukkitRunnable() {
 				@Override
 				public void run() {

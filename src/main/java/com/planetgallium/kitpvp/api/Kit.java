@@ -7,6 +7,7 @@ import com.planetgallium.kitpvp.util.Toolkit;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -145,12 +146,19 @@ public class Kit {
             }
 
             if (inventory.get(i) != null) {
+               /* ItemStack is = inventory.get(i);
+                if (is.getType().name().endsWith("_SWORD")) {
+                    ItemMeta meta = is.getItemMeta();
+                    meta.spigot().setUnbreakable(true);
+                    inventory.get(i).setItemMeta(meta);
+                }*/
                 player.getInventory().setItem(i, inventory.get(i));
+
             }
         }
 
         if (offhand != null && Toolkit.versionToNumber() >= 19) {
-            player.getInventory().setItemInOffHand(offhand);
+           // player.getInventory().setItemInOffHand(offhand);
         }
 
         if (addOverflowItems) {

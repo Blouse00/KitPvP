@@ -1,6 +1,7 @@
 package com.planetgallium.kitpvp.listener;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.planetgallium.kitpvp.game.Arena;
 import com.planetgallium.kitpvp.util.Resource;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -26,18 +27,19 @@ public class ArrowListener implements Listener {
 
 	@EventHandler
 	public void onArrowHit(EntityDamageByEntityEvent e) {
-		if (Toolkit.inArena(e.getEntity()) &&
-				e.getEntity() instanceof Player && e.getDamager() instanceof Arrow) {
+		if (e.getEntity() instanceof Player && e.getDamager() instanceof Arrow) {
 			Player damagedPlayer = (Player) e.getEntity();
-			Arrow arrow = (Arrow) e.getDamager();
+			if (Toolkit.inArena(damagedPlayer, plugin.getArena())) {
+				Arrow arrow = (Arrow) e.getDamager();
 
-			if (arrow.getShooter() != null && arrow.getShooter() instanceof Player) {
-				Player shooter = (Player) arrow.getShooter();
+				if (arrow.getShooter() != null && arrow.getShooter() instanceof Player) {
+					Player shooter = (Player) arrow.getShooter();
 
-				// make sure damaged player isn't shooter (self-hit)
-				if (!damagedPlayer.getName().equals(shooter.getName())) {
-					doArrowHitMessageIfEnabled(shooter, damagedPlayer);
-					doArrowReturnIfEnabled(shooter, damagedPlayer);
+					// make sure damaged player isn't shooter (self-hit)
+					if (!damagedPlayer.getName().equals(shooter.getName())) {
+						doArrowHitMessageIfEnabled(shooter, damagedPlayer);
+						doArrowReturnIfEnabled(shooter, damagedPlayer);
+					}
 				}
 			}
 		}

@@ -18,16 +18,18 @@ public class KillStreaks implements Listener {
 	private final Resources resources;
 	private final Resource killConfig;
 	private final HashMap<String, Integer> kills;
+	private final Arena arena;
 	
-	public KillStreaks(Resources resources) {
+	public KillStreaks(Resources resources, Arena arena) {
 		this.resources = resources;
 		this.killConfig = resources.getKillStreaks();
-		this.kills = new HashMap<>();
+        this.arena = arena;
+        this.kills = new HashMap<>();
 	}
 	
 	@EventHandler
 	public void onKill(PlayerDeathEvent e) {
-		if (Toolkit.inArena(e.getEntity())) {
+		if (Toolkit.inArena(e.getEntity(), arena)) {
 			Player damager = e.getEntity().getKiller();
 			Player damagedPlayer = e.getEntity();
 

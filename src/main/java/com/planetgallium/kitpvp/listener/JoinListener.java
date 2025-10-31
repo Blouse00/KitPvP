@@ -35,6 +35,8 @@ public class JoinListener implements Listener {
 			}
 		}
 
+		System.out.println("[KitPvP] player on join ");
+
 		arena.getStats().createPlayer(p);
 
 		if (p.getName().equals("cervinakuy")) {
@@ -42,7 +44,7 @@ public class JoinListener implements Listener {
 					" &7has joined the server."));
 		}
 
-		if (Toolkit.inArena(p)) {
+		if (Toolkit.inArena(p, arena)) {
 			if (config.getBoolean("Arena.ClearInventoryOnJoin")) {
 				p.getInventory().clear();
 				p.getInventory().setArmorContents(null);
@@ -57,7 +59,7 @@ public class JoinListener implements Listener {
 	public void onWorldChange(PlayerChangedWorldEvent e) {
 		Player p = e.getPlayer();
 
-		if (Toolkit.inArena(p)) {
+		if (Toolkit.inArena(p, arena)) {
 			if (config.getBoolean("Arena.ClearInventoryOnJoin")) {
 				p.getInventory().clear();
 				p.getInventory().setArmorContents(null);

@@ -11,7 +11,7 @@ public class Leaderboards {
     private final Map<String, Leaderboard> leaderboards;
 
     public Leaderboards(Game plugin) {
-        Infobase database = plugin.getDatabase();
+        Infobase database = plugin.getDb();
         this.leaderboards = new HashMap<>();
 
         leaderboards.put("kills",

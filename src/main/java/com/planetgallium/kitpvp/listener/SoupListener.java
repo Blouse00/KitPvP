@@ -27,7 +27,7 @@ public class SoupListener implements Listener {
 	public void onPlayerDeath(PlayerDeathEvent e) {
 		Player victim = e.getEntity();
 
-		if (!Toolkit.inArena(victim)) {
+		if (!Toolkit.inArena(victim, plugin.getArena())) {
 			return;
 		}
 			
@@ -69,7 +69,7 @@ public class SoupListener implements Listener {
 
 		Player p = e.getPlayer();
 
-		if (Toolkit.inArena(p) &&
+		if (Toolkit.inArena(p, plugin.getArena()) &&
 				(e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK)) {
 			if (Toolkit.hasMatchingMaterial(Toolkit.getHandItemForInteraction(e), "MUSHROOM_STEW")) {
 				e.setCancelled(true);

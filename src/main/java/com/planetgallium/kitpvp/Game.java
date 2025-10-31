@@ -134,6 +134,7 @@ public class Game extends JavaPlugin implements Listener {
 						String server = resources.getConfig().fetchString("Items.Leave.BungeeCord.Server");
 
 						out.writeUTF(server);
+					//	System.out.println("[KitPvP] Sending " + p.getName() + " to server " + server);
 						p.sendPluginMessage(this, "BungeeCord", out.toByteArray());
 					}
 					e.setCancelled(true);
@@ -162,7 +163,7 @@ public class Game extends JavaPlugin implements Listener {
 	
 	public Arena getArena() { return arena; }
 
-	public Infobase getDatabase() { return database; }
+	public Infobase getDb() { return database; }
 	
 	public static String getPrefix() { return prefix; }
 	
